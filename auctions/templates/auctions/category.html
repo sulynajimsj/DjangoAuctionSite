@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+
+<div class="container">
+    <div class="form-row">
+        <div class="col">
+            <a href="{% url 'category' 'home' %}" class="btn btn-dark btn-block" type="submit">Home</a>
+        </div>
+        <div class="col">
+            <a href="{% url 'category' 'toys' %}" class="btn btn-dark btn-block" type="submit">Toys</a>
+        </div>
+        <div class="col">
+            <a href="{% url 'category' 'sports' %}" class="btn btn-dark btn-block" type="submit">Sports</a>
+        </div>
+    </div>
+    <div class="form-row mt-2">
+        <div class="col">
+            <a href="{% url 'category' 'books' %}" class="btn btn-dark btn-block" type="submit">Books</a>
+        </div>
+        <div class="col">
+            <a href="{% url 'category' 'none' %}" class="btn btn-dark btn-block" type="submit">No Category</a>
+        </div>
+        <div class="col">
+            <a href="{% url 'category' 'others' %}" class="btn btn-dark btn-block" type="submit">Others</a>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

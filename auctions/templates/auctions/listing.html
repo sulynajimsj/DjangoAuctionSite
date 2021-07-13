@@ -1,0 +1,125 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    
+    {% if commentSuccess %}
+    <div class="alert alert-success my-2" role="alert">
+        Successfully added comment!
+    </div>
+    {% elif commentSuccess == False %}
+    <div class="alert alert-danger my-2" role="alert">
+        Error: Comment cannot be added!
+    </div>
+    {% endif %}
+    {% if bidsuccess %}
+    <div class="alert alert-success my-2" role="alert">
+        Successfully added bid!
+    </div>
+    {% elif bidsuccess == False %}
+    <div class="alert alert-danger my-2" role="alert">
+        The bid must be greater than the previous bid!
+    </div>
+    {% endif %}
+    {% if user.is_authenticated %}
+        {% if button %}
+            <a href="{% url 'watchlist' listing.id %}"class="btn btn-outline-secondary">Watchlist</a>
+        {% else %}
+            <a  href="{% url 'removeWL' listing.id %}" class="btn btn-outline-secondary">Remove</a>
+        {% endif %}
+
+        {% if status and listing.user == currentuser %}
+            <a href= "{% url 'close' listing.id %}"class="btn btn-outline-secondary bg-red">Close</a>
+        {% endif %}
+
+    <br>
+    <br>
+    {% endif %}
+    <h1 class="display-3 font-weight-bold">{{listing.title}}</h1>
+    
+    
+    <div class="container my-5 text-center">
+    {% if listing.image %}
+        <img style = "max-height:450px; width: 80%;" class="card-img-top" src={{listing.image}} alt="Card image cap">
+                
+    {% else %}
+        <img style = "max-height:450px; width: 80%;" class="card-img-top" src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" alt="Card image cap">
+    {% endif %}
+    </div>
+
+    <div>
+        <p>{{listing.des}}</p>
+        <h2>${{listing.bid.amount}}</h2>
+        {% if user.is_authenticated and currentuser != listing.user and status %}
+            <form method = "POST" action="{% url 'bid' listing.id %}">
+                {% csrf_token %}
+                {{bidform}}
+                <input type="submit" value="Place Bid">
+
+            </form>
+        {% endif %}
+        
+        
+        
+        
+
+        <h3>Details</h3>
+        <ul>
+            <li>Listed by: {{listing.user}}</li>
+            <li>Category: {{listing.category}}</li>
+            {% if listing.status %}
+                <li>Status: Open</li>
+            {% else %}
+                <li>Status: Closed</li>
+            {% endif %}
+
+        </ul>
+        <br>
+        <h2>Comments</h2>
+        {% if user.is_authenticated and request.user != listing.user %}
+        <form method = "POST" action="{% url 'comment' listing.id %}">
+            {% csrf_token %}
+            {{commentForm}}
+            <br>
+            <input type="submit" value="Add Comment" class="btn btn-dark">
+
+        </form>
+        {% endif %}
+        <hr>
+        <div class="my-5">
+            <div class="row d-flex">
+                <div class="col-md-8">
+                    {% for comment in comments %}
+                    <div class="card p-3 mt-1">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="user d-flex flex-row align-items-center"> <span><small class="font-weight-bold text-primary">{{comment.user}}</small> <small class="font-weight-bold">{{comment.thecomment}}</small></span> </div> <small>{{comment.date}}</small>
+                        </div>
+                        
+                    </div>
+
+                    {% empty %}
+                        <h3 class="display-4">No comments yet!</h3>
+                    {% endfor %}
+                    
+                </div>
+            </div>
+        </div>
+
+        
+
+        {% if status == False %}
+            {% if winner %}
+                <div>Congrats you won the auction</div>
+            {% elif winner == False and nobid == False %}
+                <div>Auction is closed (You did not win)</div>
+            {% elif nobid %}
+                <div>No one added a bid to this auction</div>
+            {% else %}
+                <div>Auction Closed!</div>
+            {% endif %}
+        {% endif %}
+        
+    </div>
+
+    
+
+{% endblock %}
